@@ -1,3 +1,26 @@
+/*Задание 2.
+Выполнено: Кобыленко Д., группа 2743.
+
+Вариант 1. (А - Л). Данные представляют собой таблицу курсов иностранных валют к рублю. Данные представлены в
+текстовом файле, который содержит список валют в виде строк, содержащих код и название валюты, а также курс валюты
+к рублю, например:
+AUD    33.0155     Австралийский доллар
+AZN    46.7753    Азербайджанский манат
+BGN    25.9668    Болгарский лев
+BRL    15.4975     Бразильский реал
+DKK     6.8043     Датская крона
+USD    36.6391    Доллар США
+EUR    50.7635    ЕВРО
+Программа должна позволять пользователю на основании этих данных рассчитывать кросс-курсы разных валют (включая
+российский рубль), при этом диалог должен иметь приблизительно такой вид.
+Всего в диалоге задействовано 5 строк с элементами управления. Пользователь вводит в некоторых строках интересующие
+его валюты, например, как показано на картинке - российский рубль, доллар США и датскую крону (выбор в остальных
+строках - строка “(нет валюты)”), далее он вводит в одной из строк сумму в указанной валюте и нажимает на кнопку
+“Пересчитать”. Если данные введены правильно, то программа рассчитывает соответствующие суммы в валютах остальных
+выбранных стран и выводит результаты в соответствующих окнах ввода. Если данные введены неправильно (ошибка в формате
+числа, не выбрана валюта, отрицательная сумма и т.п.), то пользователю сообщают об этом в отдельном информационном
+модальном окне.*/
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -6,28 +29,27 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 public class CalculatorCurrency extends JFrame {
-    private ArrayList<Data> data;
-
+    private ArrayList<Data> data; //Хранит считанные данные
     private final int N = 5;
     private JComboBox[] comboBoxes;
     private JTextField[] textFields;
-    private JButton[] buttons;
-
-    private String stringNoCurrency = "(нет валюты)";
+    private String stringNoCurrency = "(нет валюты)"; //Добавляем строку, которой нет в файле
 
     public CalculatorCurrency() throws FileNotFoundException {
         super("Калькулятор валют");
         setContentPane(createAndShowGUI());
     }
 
+/*Метод, "склеивающий" код и полное название валюты*/
+
     private String genStringForList(String code, String fullName) {
         return code + " (" + fullName + ")";
     }
 
     private JPanel createAndShowGUI() throws FileNotFoundException {
-        Reader reader = new Reader("data.txt");
+        FileReader reader = new FileReader("data.txt");
         data = reader.getData();
-        data.add(new Data("RUR", 1.0, "Российский рубль"));
+        data.add(new Data("RUR", 1.0, "Российский рубль")); //Добавляем рубль к данным
         String[] comboBoxData = new String[data.size() + 1];
         comboBoxData[0] = stringNoCurrency;
         for (int i = 0; i < data.size(); i++) {
@@ -40,7 +62,7 @@ public class CalculatorCurrency extends JFrame {
 
         comboBoxes = new JComboBox[N];
         textFields = new JTextField[N];
-        buttons = new JButton[N];
+        JButton[] buttons = new JButton[N];
 
         for (int i = 0; i < N; i++) {
             comboBoxes[i] = new JComboBox<String>(comboBoxData);
@@ -60,13 +82,11 @@ public class CalculatorCurrency extends JFrame {
         return mainPanel;
     }
 
-    String[] errors = {
-            "",
-            "Вы не выбрали валюту",
-            "Число не может быть отрицательным",
-            "Введённая Вами информация не является числом",
-            "Вы ничего не ввели"
-    };
+/*Создадим массив возможных ошибок*/
+    
+    String[] errors = {"", "Вы не выбрали валюту", "Число не может быть отрицательным",
+            "Введённая Вами информация не является числом", "Вы ничего не ввели"};
+
     private class ButtonActionListener implements ActionListener {
         private final int id;
 
@@ -75,7 +95,7 @@ public class CalculatorCurrency extends JFrame {
         }
 
         private double getFactor(String item) {
-            for (Data d: data) {
+            for (Data d : data) {
                 if (item.equals(genStringForList(d.getCode(), d.getFullName()))) {
                     return d.getFactor();
                 }

@@ -1,3 +1,5 @@
+/*Класс, содержащий данные из считанного файла*/
+
 public class Data {
     private String code;
     private double factor;
@@ -8,14 +10,19 @@ public class Data {
         this.factor = factor;
         this.fullName = fullName;
     }
+/*Возвращает код валюты (например, USD)*/
 
     public String getCode() {
         return code;
     }
 
+/*Возвращает курс валюты относительно рубля*/
+
     public double getFactor() {
         return factor;
     }
+
+/*Возвращает полное название валюты*/
 
     public String getFullName() {
         return fullName;
