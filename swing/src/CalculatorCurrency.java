@@ -46,6 +46,8 @@ public class CalculatorCurrency extends JFrame {
         return code + " (" + fullName + ")";
     }
 
+/*Создаем панель и добавляем на нее нужные компоненты*/
+
     private JPanel createAndShowGUI() throws FileNotFoundException {
         FileReader reader = new FileReader("data.txt");
         data = reader.getData();
@@ -83,9 +85,11 @@ public class CalculatorCurrency extends JFrame {
     }
 
 /*Создадим массив возможных ошибок*/
-    
+
     String[] errors = {"", "Вы не выбрали валюту", "Число не может быть отрицательным",
             "Введённая Вами информация не является числом", "Вы ничего не ввели"};
+
+/*Добавляем действие на кнопку "Пересчитать", каждая кнопка имеет свой номер*/
 
     private class ButtonActionListener implements ActionListener {
         private final int id;
@@ -93,6 +97,7 @@ public class CalculatorCurrency extends JFrame {
         public ButtonActionListener(int id) {
             this.id = id;
         }
+/*Получаем курс переданной валюты*/
 
         private double getFactor(String item) {
             for (Data d : data) {
@@ -102,6 +107,9 @@ public class CalculatorCurrency extends JFrame {
             }
             return 0;
         }
+
+/*Метод, который выводит во все поля(кроме того, напротив которго была нажата кнопка) результат. В случае
+* ошибки выдает всплывающее окно с описанием этой ошибки.*/
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -129,6 +137,7 @@ public class CalculatorCurrency extends JFrame {
                 textFields[i].setText(Double.toString(result));
             }
         }
+/*Метод, проверяющий возможные ошибки и возвращающий определенный результат*/
 
         private int checkErrors() {
             if (comboBoxes[id].getSelectedItem().equals(stringNoCurrency)) {
