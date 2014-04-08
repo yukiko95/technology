@@ -65,7 +65,7 @@ public class CalculatorCurrency extends JFrame {
 
         for (int i = 0; i < N; i++) {
             comboBoxes[i] = new JComboBox<String>(comboBoxData);
-            comboBoxes[i].setPrototypeDisplayValue("XXXXXXXXXXXXXXXXXXXX");
+            comboBoxes[i].setPrototypeDisplayValue("XXXXXXXXXXXXXXXXXXXXXXXX");
             textFields[i] = new JTextField("");
             textFields[i].setSize(10, 3);
             buttons[i] = new JButton("Пересчитать");
