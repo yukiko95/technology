@@ -27,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class CalculatorCurrency extends JFrame {
     private ArrayList<Data> data; //Хранит считанные данные
@@ -34,6 +35,7 @@ public class CalculatorCurrency extends JFrame {
     private JComboBox[] comboBoxes;
     private JTextField[] textFields;
     private String stringNoCurrency = "(нет валюты)"; //Добавляем строку, которой нет в файле
+    private String[] comboBoxData;
 
     public CalculatorCurrency() throws FileNotFoundException {
         super("Калькулятор валют");
@@ -49,14 +51,9 @@ public class CalculatorCurrency extends JFrame {
 /*Создаем панель и добавляем на нее нужные компоненты*/
 
     private JPanel createAndShowGUI() throws FileNotFoundException {
-        FileReader reader = new FileReader("data.txt");
-        data = reader.getData();
-        data.add(new Data("RUR", 1.0, "Российский рубль")); //Добавляем рубль к данным
-        String[] comboBoxData = new String[data.size() + 1];
+        data = new ArrayList<Data>();
+        comboBoxData = new String[1];
         comboBoxData[0] = stringNoCurrency;
-        for (int i = 0; i < data.size(); i++) {
-            comboBoxData[i + 1] = genStringForList(data.get(i).getCode(), data.get(i).getFullName());
-        }
 
         JPanel mainPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JPanel panel = new JPanel(new GridLayout(5, 3, 5, 5));
@@ -81,6 +78,8 @@ public class CalculatorCurrency extends JFrame {
         for (int i = 0; i < N; i++) {
             buttons[i].addActionListener(new ButtonActionListener(i));
         }
+
+        new LoaderComboBox().execute();
         return mainPanel;
     }
 
@@ -177,5 +176,34 @@ public class CalculatorCurrency extends JFrame {
                 calculatorCurrency.setVisible(true);
             }
         });
+    }
+
+    private class LoaderComboBox extends SwingWorker<ArrayList<Data>, Void> {
+
+        @Override
+        protected ArrayList<Data> doInBackground() throws Exception {
+            FileReader reader = new FileReader("data.txt");
+            Thread.sleep(5000); // ждём 3 секунды для видимого эффекта
+            ArrayList<Data> data = reader.getData();
+            data.add(new Data("RUR", 1.0, "Российский рубль")); //Добавляем рубль к данным
+            return data;
+        }
+
+        protected void done() {
+            try {
+                data = get();
+                comboBoxData = new String[data.size()];
+                for (int i = 0; i < data.size(); i++) {
+                    comboBoxData[i] = genStringForList(data.get(i).getCode(), data.get(i).getFullName());
+                    for (int j = 0; j < N; j++) {
+                        comboBoxes[j].addItem(comboBoxData[i]);
+                    }
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
